@@ -19,16 +19,23 @@ return new class extends Migration
                 ->constrained('users', 'id')
                 ->nullOnDelete();
 
-            $table->string('path');
-
             $table->string('title')->nullable();
             $table->string('alt')->nullable();
             $table->string('caption')->nullable();
 
-            $table->string('disk')->nullable();
+            $table->string('disk')
+                ->nullable()
+                ->default('public');
+
+            $table->string('path');
+            $table->string('url')->nullable();
+
 
             $table->string('width')->nullable();
             $table->string('height')->nullable();
+
+            $table->string('mime_type')->nullable();
+            $table->unsignedBigInteger('size')->nullable();
 
             $table->timestamps();
         });
