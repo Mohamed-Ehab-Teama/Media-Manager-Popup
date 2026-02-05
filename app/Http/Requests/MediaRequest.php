@@ -26,21 +26,29 @@ class MediaRequest extends FormRequest
                 'required',
                 'file',
                 'max:5120',     // 5 * 1024 = 5120 => 5MB
-                'mimes:png,jpg,jpeg,pdf',
+                'mimes:jpg,jpeg,png,gif,webp,pdf,docx',
+                'mimetypes:'
+                    . 'image/jpg,'
+                    . 'image/jpeg,'
+                    . 'image/png,'
+                    . 'image/gif,'
+                    . 'image/webp,'
+                    . 'application/pdf,'
+                    . 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             ],
-            'title'     => 'nullable|string|max:255',
-            'alt'       => 'nullable|string',
-            'caption'   => 'nullable|string',
-            // 'title'     => '',
-            // 'alt'       => '',
-            // 'caption'   => '',
-            // 'disk'      => '',
-            // 'path'      => '',
-            // 'url'       => '',
-            // 'width'     => '',
-            // 'height'    => '',
-            // 'mime_type' => '',
-            // 'size'      => '',
+            // 'title'     => 'nullable|string|max:255',
+            // 'alt'       => 'nullable|string',
+            // 'caption'   => 'nullable|string',
+        ];
+    }
+
+
+
+    public function messages()
+    {
+        return [
+            'file.mimes'     => 'Invalid file extension.',
+            'file.mimetypes' => 'Only images, PDF, and Word documents are allowed.',
         ];
     }
 }

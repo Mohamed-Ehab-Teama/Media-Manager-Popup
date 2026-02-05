@@ -4,10 +4,6 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::fallback(function () {
-    return view('welcome');
-});
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -30,10 +26,18 @@ Route::middleware(['auth'])
     ->group(function () {
 
         // =============== Media Routes
+        Route::view('/tinyMCE', 'index')
+            ->name('tinymce.home');
+
+        // =============== Media Routes
         Route::resource('media', MediaController::class)
-            ->only(['index', 'store']);
+            ->except(['create', 'show', 'edit']);
     });
 
 
 
 require __DIR__ . '/auth.php';
+
+Route::fallback(function () {
+    return view('welcome');
+});
