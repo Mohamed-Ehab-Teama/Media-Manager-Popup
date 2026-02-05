@@ -91,8 +91,8 @@
 
                     <div class="details-field">
                         <label>File URL</label>
-                        <input type="text" id="detailsUrl" readonly disabled>
-                        <button class="copy-url-btn" onclick="copyUrl()">📋 Copy URL</button>
+                        <input type="text" id="detailsUrl" readonly >
+                        <button class="copy-url-btn" onclick="copyUrl(this)">📋 Copy URL</button>
                     </div>
 
                     <div class="details-info" id="detailsInfo"></div>

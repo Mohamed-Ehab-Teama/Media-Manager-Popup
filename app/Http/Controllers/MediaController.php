@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MediaRequest;
+use App\Http\Resources\MediaResource;
 use App\Models\Media;
 use App\Services\StoreMediaService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 use function App\Helpers\custom_json_response;
@@ -27,37 +29,14 @@ class MediaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Media::where('user_id', Auth::id())
+        $media = Media::where('user_id', Auth::id())
             ->search($request)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        $media = $query->map(function ($item) {
-            $fileTypes = ['.jpg', '.jpeg', '.png', '.gif'];
-            $type = 'document'; // default
-            foreach ($fileTypes as $fileType) {
-                if (str_contains($item->path, $fileType)) {
-                    $type = 'image';
-                    break;
-                }
-            }
-
-            return [
-                'id'        => $item->id,
-                'type'      => $type,
-                'url'       => asset('storage/' . $item->path),
-                'filename'  => basename($item->path),
-                'size'      => $item->size ?? '',
-                'alt'       => $item->alt,
-                'title'     => $item->title,
-                'caption'   => $item->caption,
-                'uploadDate' => $item->created_at->format('Y-m-d H:iA')
-            ];
-        });
-
 
         return custom_json_response(
-            $media,
+            MediaResource::collection($media),
             true,
             'Data Retrieved Successfully',
             200
@@ -76,7 +55,7 @@ class MediaController extends Controller
         $storeMedia = $this->storeMediaService->storeMedia($data);
 
         return custom_json_response(
-            $storeMedia,
+            new MediaResource($storeMedia),
             true,
             'Media Stored Successfully',
             200,

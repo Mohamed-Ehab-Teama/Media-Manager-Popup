@@ -340,20 +340,55 @@ function formatFileSize(bytes) {
 
 
 
-// Copy URL
-function copyUrl() {
-    const urlInput = document.getElementById('detailsUrl');
-    urlInput.select();
-    document.execCommand('copy');
+// ==========================================   Copy URL
+function copyUrl(button) {
+    const input = document.getElementById('detailsUrl');
+    const url = input.value;
 
-    // Visual feedback
-    const btn = event.target;
-    const originalText = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => {
-        btn.textContent = originalText;
-    }, 2000);
+    if (!url) {
+        alert('No URL to copy');
+        return;
+    }
+
+    // ✅ Modern way
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url)
+            .then(() => successFeedback(button))
+            .catch(() => fallbackCopy(input, button));
+    }
+    // 🧓 Old browsers / TinyMCE / iframe
+    else {
+        fallbackCopy(input, button);
+    }
 }
+
+function fallbackCopy(input, button) {
+    input.select();
+    input.setSelectionRange(0, 99999); // mobile support
+
+    try {
+        document.execCommand('copy');
+        successFeedback(button);
+    } catch (err) {
+        alert('Copy failed');
+        console.error(err);
+    }
+}
+
+function successFeedback(button) {
+    if (!button) return;
+
+    const originalText = button.textContent;
+    button.textContent = '✅ Copied!';
+    button.disabled = true;
+
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+    }, 1500);
+}
+
+
 
 
 // Insert media into editor
