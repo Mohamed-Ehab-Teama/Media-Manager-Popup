@@ -31,7 +31,7 @@ Route::middleware(['auth'])
 
         // =============== Media Routes
         Route::resource('media', MediaController::class)
-            ->only(['store']);
+            ->only(['index', 'store']);
     });
 
 

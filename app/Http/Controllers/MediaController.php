@@ -4,53 +4,42 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MediaRequest;
 use App\Models\Media;
+use App\Services\StoreMediaService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class MediaController extends Controller
 {
+    protected $storeMediaService;
+    public function __construct(StoreMediaService $storeMediaService)
+    {
+        $this->storeMediaService = $storeMediaService;
+    }
+
+
     /**
-     * Store New Midea
+     * Show All Media of the user
+     */
+    public function index(Request $request)
+    {
+        $media = Media::where('user_id', Auth::id())
+            ->search($request)
+            ->paginate(20);
+
+        return view('', compact('media'));
+    }
+
+
+
+    /**
+     * Store New Media
      */
     public function store(MediaRequest $request)
     {
         $data = $request->validated();
-        $file = $data['file'];
 
-        $title = null;
-        $alt = $data['alt'] ?? null;
-        $caption = $data['caption'] ?? null;
-        if ($data['title']) {
-            $title = trim(str_replace(['   ', '  ', ' '], '_', $data['title']));
-        }
+        $storeMedia = $this->storeMediaService->storeMedia($data);
 
-        $path = $file->store('midea/' . now()->format('Y/m/d'), 'public');
-        $url = Storage::disk('public')->url($path);
-
-        $width = null;
-        $height = null;
-
-        if (str_starts_with($file->getMimeType(), 'image/')) {
-            [$width, $height] = getimagesize($file);
-        }
-
-        $mideaFile = Media::create([
-            'user_id'   => auth()->id(),
-            'title'     => $title ?? pathinfo(
-                $file->getClientOriginalName(),
-                PATHINFO_FILENAME
-            ),
-            'alt'       => $alt,
-            'caption'   => $caption,
-            'disk'      => 'public',
-            'path'      => $path,
-            'url'       => $url,
-            'width'     => $width,
-            'height'    => $height,
-            'mime_type' => $file->getMimeType(),
-            'size'      => $file->getSize(),
-        ]);
-
-        return back()->with('success', 'Midea File Uploaded Successfully');
+        return back()->with('success', 'Media File Uploaded Successfully');
     }
 }
