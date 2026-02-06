@@ -23,6 +23,12 @@
             });
         },
 
+        relative_urls: true,
+        remove_script_host: false,
+        convert_urls: false,
+
+        link_click_action: 'open',
+
     });
 
     // Open Modal

@@ -236,10 +236,6 @@ function uploadMedia(file, progressId) {
 
 
 
-
-
-
-
 // ==========================================   Select media item
 function selectMedia(id) {
     const item = mediaManager.mediaItems.find(m => m.id === id);
@@ -391,7 +387,7 @@ function successFeedback(button) {
 
 
 
-// Insert media into editor
+// ==========================================   Insert media into editor
 function insertMedia() {
     if (!mediaManager.selectedItem) return;
 
@@ -400,28 +396,30 @@ function insertMedia() {
     // Generate HTML based on type
     let html = '';
     if (item.type === 'image') {
-        html = `<img src="${item.url}" alt="${item.alt || ''}" title="${item.title || ''}" />`;
+        html = `<img src="${item.url}" alt="${item.alt || ''}" width="200px" height="auto" title="${item.title || ''}" />`;
     } else {
-        html = `<a href="${item.url}">${item.title || item.filename}</a>`;
+        html = `<a href="${item.url}" target="_blank">${item.title || item.filename}</a>`;
     }
 
     console.log('Insert into editor:', html);
-    alert(`This will be inserted into TinyMCE:\n\n${html}`);
+    // alert(`This will be inserted into TinyMCE:\n\n${html}`);
 
     // Here you would actually insert into TinyMCE
-    // tinymce.activeEditor.insertContent(html);
+    tinymce.activeEditor.insertContent(html);
 
     closeMediaManager();
 }
 
 
-// Open modal
+
+
+// ==========================================   Open modal
 function openMediaManager() {
     document.getElementById('mediaModal').classList.add('active');
 }
 
 
-// Close modal
+// ==========================================   Close modal
 function closeMediaManager() {
     document.getElementById('mediaModal').classList.remove('active');
     mediaManager.selectedItem = null;
@@ -431,7 +429,7 @@ function closeMediaManager() {
 }
 
 
-// Close on overlay click
+// ==========================================   Close on overlay click
 document.getElementById('mediaModal').addEventListener('click', (e) => {
     if (e.target.id === 'mediaModal') {
         closeMediaManager();
@@ -439,5 +437,7 @@ document.getElementById('mediaModal').addEventListener('click', (e) => {
 });
 
 
-// Initialize on page load
+
+
+// ==========================================   Initialize on page load
 window.addEventListener('DOMContentLoaded', initMediaManager);
